@@ -118,6 +118,22 @@ const planetRevolver = (time, planet, speed, orbitRadius) => {
     planetSun.position.z + orbitRadius * Math.cos(planetAngle);
 };
 
+// const animateCamera = (time, planet) => {
+//   const SPEED_MULTIPLIER = 0.000001;
+
+//   const angle = time * SPEED_MULTIPLIER;
+
+//   // camera.position.x = planet.position.x + angle;
+//   // camera.position.y = planet.position.y + angle;
+//   // camera.position.z = planet.position.z + angle;
+
+//   // camera.rotation.x = 0.5 + Math.tan(angle);
+//   // camera.rotation.y = -0.5 + Math.tan(angle);
+//   // camera.rotation.z = -0.5 + Math.tan(angle);
+
+//   camera.lookAt(planet.position);
+// };
+
 function init() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(
@@ -211,16 +227,29 @@ function init() {
 
   document.body.appendChild(renderer.domElement);
 
-  camera.position.z = 100;
+  camera.position.z = 150;
+  camera.position.y = 150;
+  // camera.position.z = 150;
+  camera.rotation.x = Math.PI / 4;
+  // camera.position.y = 50;
+  // camera.rotation.x = -20;
 
-  const controls = new OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
 
   controls.minDistance = 12;
   controls.maxDistance = 1000;
+
+  controls.dumpingFactor = true;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 1.25;
+  controls.enableZoom = true;
 }
 
 const animate = (time) => {
   requestAnimationFrame(animate);
+
+  controls.update(0.05);
+
   renderer.render(scene, camera);
 
   planetRevolver(
@@ -279,6 +308,20 @@ const animate = (time) => {
     neptune_orbit_radius,
     "Neptune"
   );
+
+  // animateCamera(time, planetNeptune);
+  // animateCamera(time, planetUranus);
+  // animateCamera(time, planetSaturn);
+  // animateCamera(time, planetJupiter);
+  // animateCamera(time, planetMars);
+  // animateCamera(time, planetEarth);
+  // animateCamera(time, planetVenus);
+  // animateCamera(time, planetMercury);
+
+  // camera.lookAt(planetSun.position);
+  // camera.position.copy(planetNeptune.position);
+  // camera.position.y = 50;
+  // camera.position.x = 50;
 };
 
 window.addEventListener(
@@ -290,6 +333,18 @@ window.addEventListener(
   },
   false
 );
+
+const btnSwitchPlanets = document.getElementsByClassName("btn-switch-planet");
+
+for (let pt of btnSwitchPlanets) {
+  pt.addEventListener("click", (event) => {
+    const planetName = event.target.getAttribute("data-name");
+
+    if (planetName === "EARTH") {
+      camera.lookAt(planetEarth.position);
+    }
+  });
+}
 
 init();
 
